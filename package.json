@@ -1,0 +1,27 @@
+{
+  "name": "Leetcodebackend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^7.4.1",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.1.4",
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.11",
+    "redis": "^5.10.0",
+    "validator": "^13.15.26"
+  }
+}
