@@ -1,9 +1,9 @@
 import mongoose from "mongoose"
-import { configDotenv } from "dotenv"
-configDotenv()
+import dotenv from "dotenv";
+dotenv.config();
 
 export default async function mongodb(){
-    const mongodbUrl=MONGODB_CONNECTION_URL
+    const mongodbUrl=process.env.MONGODB_CONNECTION_URL
     const dbname="leetcode"
     const connectionUrl=`${mongodbUrl}/${dbname}`
 

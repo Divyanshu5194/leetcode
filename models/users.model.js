@@ -3,14 +3,14 @@ import mongoose from "mongoose";
 const userSchema=new mongoose.Schema({
     username:{
         type:String,
-        require:true,
+        required:true,
         minLength:3,
         maxLength:80,
         unique:true
     },
     email:{
         type:String,
-        require:true,
+        required:true,
         maxLength:256,
         unique:true,
         trim:true,
@@ -20,7 +20,7 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
         select:false,
-        require:true
+        required:true
     },
     rating:{
         type:Number,
@@ -33,11 +33,11 @@ const userSchema=new mongoose.Schema({
     role:{
         type:String,
         enum:["User","Admin"],
-        require:true,
+        required:true,
         default:"User"
     },
     solved:{
-        type:[string]
+        type:[String]
     }
 },{timestamps:true})
 
