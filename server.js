@@ -15,8 +15,7 @@ const PORT=4000;
 
 (async ()=>{
     try{
-        await mongodb()
-        await client
+        await Promise.all([mongodb(),client])
         server()
     }
     catch(error){
@@ -29,7 +28,7 @@ function server(){
     app.use(cookieParser())
     app.use(rateLimiter)
 
-    app.use("/user",userRouter)
+    app.use(userRouter)
 
     app.listen(PORT,()=>{
         console.log(`server listening on port : ${PORT}`)

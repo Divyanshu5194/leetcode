@@ -3,6 +3,7 @@ import isValidRegisteration from "../utils/validator.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import Refreshtokens from "../models/refreshToken.model.js"
+import client from "../config/redisconnect.js"
 
 const register=async (req,res)=>{
     try{
@@ -15,10 +16,11 @@ const register=async (req,res)=>{
         if(existingUser){
             throw new Error("Users with the username or email already exists")
         }
-        const newuser=await User.create({username,email,password:hashedpassword})
+        
+        const newuser=await User.create({username,email,password:hashedpassword,role:"User"})
 
-        const token=jwt.sign({id:newuser._id},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
-        const refreshToken=jwt.sign({id:newuser._id},process.env.REFRESH_TOKEN_KEY,{expiresIn:"30d"})
+        const token=jwt.sign({_id:newuser._id,role:newuser.role},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
+        const refreshToken=jwt.sign({_id:newuser._id,role:newuser.role},process.env.REFRESH_TOKEN_KEY,{expiresIn:"30d"})
         await Refreshtokens.create({user:newuser._id,refreshToken:refreshToken})
 
         res.cookie("acesstoken",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
@@ -52,17 +54,17 @@ const login=async (req,res)=>{
                 throw new Error("Invalid Credentials!")
             }
 
-            const token=jwt.sign({id:existinguser._id},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
-            const refreshToken=jwt.sign({id:existinguser._id},process.env.REFRESH_TOKEN_KEY,{expiresIn:"30d"})
+            const token=jwt.sign({_id:existinguser._id,role:existinguser.role},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
+            const refreshToken=jwt.sign({_id:existinguser._id,role:existinguser.role},process.env.REFRESH_TOKEN_KEY,{expiresIn:"30d"})
             await Refreshtokens.create({user:existinguser._id,refreshToken:refreshToken})
 
-            res.cookie("acesstoken",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
+            res.cookie("token",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
             res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
             return res.status(200).send("Login Sucessful!")
         }
     }
     catch(error){
-        res.status(401).send(`error in login : ${error}`)
+        res.status(403).send(`error in login : ${error}`)
     }
 }
 
@@ -81,15 +83,20 @@ const logout=async (req,res)=>{
 
     const payload=jwt.verify(req.cookies.token,process.env.ENCRIPTION_KEY)
     const expirytime=payload.exp
+
+    
     
     const redisClient=await client
     await redisClient.set(`token : ${req.cookies.token}`,"blocked")
     await redisClient.expireAt(`token : ${req.cookies.token}`,expirytime)
 
+    
+
     res.cookie("token",null,{expires:new Date(Date.now())})
     res.cookie("refreshToken",null,{expires:new Date(Date.now())})
 
     res.status(200).send("Logged Out Sucessfully")
+    
   }
   catch(error){
     res.status(400).send(error)
@@ -100,7 +107,7 @@ const refresh=async (req,res)=>{
     try{
         const {refreshToken:incomingRefreshToken}=req.cookies;
         if(!incomingRefreshToken){
-            return res.status(401).send("No Refresh token present")
+            return res.status(403).send("No Refresh token present")
         }
 
         let _id;
@@ -110,27 +117,28 @@ const refresh=async (req,res)=>{
             _id=payload._id
         }
         catch(error){
-            return res.status(401).send("invalid user")
+            return res.status(403).send("invalid user")
         }
 
         if(!_id){
-            return res.status(401).send("invalid refresh token")
+            return res.status(403).send("invalid refresh token")
         }
 
         const dbtokenobj=await Refreshtokens.findOne({refreshToken:incomingRefreshToken})
 
         if(!dbtokenobj){
-            return res.status(401).send("invalid refresh token")
+            return res.status(403).send("invalid refresh token")
         }
 
         if(!(dbtokenobj.refreshToken===incomingRefreshToken)){
-            return res.status(401).send("invalid refresh token")
+            return res.status(403).send("invalid refresh token")
         }
+        const user=await User.findOne({_id})
         
 
-        const token=jwt.sign({_id},process.env.ENCRIPTION_KEY,{expiresIn:"20m"})
-        const newrefreshToken=jwt.sign({_id},process.env.REFRESH_TOKEN_KEY,{expiresIn:"7d"})
-        await Refreshtokens.findOneAndReplace({refreshToken:incomingRefreshToken},{refreshToken:newrefreshToken})
+        const token=jwt.sign({_id,role:user.role},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
+        const newrefreshToken=jwt.sign({_id,role:user.role},process.env.REFRESH_TOKEN_KEY,{expiresIn:"30d"})
+        await Refreshtokens.findOneAndReplace({refreshToken:incomingRefreshToken},{user:_id,refreshToken:newrefreshToken})
 
 
         res.status(200)
@@ -148,9 +156,8 @@ const refresh=async (req,res)=>{
 const getProfile=async (req,res)=>{
     try{
         const {token}=req.cookies
-        const {id}=jwt.decode(token)
-        console.log({token,id})
-        const user=await User.findOne({_id:id})
+        const {_id}=jwt.verify(token,process.env.ENCRIPTION_KEY)
+        const user=await User.findOne({_id})
 
         if(!user){
             return res.status(404).send("User Not Found")

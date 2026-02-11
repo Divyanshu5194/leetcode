@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import { User } from "../models/users.model.js"
 import client from "../config/redisconnect.js"
 
-export const userAuth=async function(req,res,next){
+const adminMiddleware=async function(req,res,next){
   try{
     const redisClient=await client
     const {token}=req.cookies
@@ -21,7 +21,7 @@ export const userAuth=async function(req,res,next){
 
       try{
         const payload=jwt.verify(token,process.env.ENCRIPTION_KEY)
-        _id=payload._id
+        _id=payload._id;
       }
       catch(error){
         return res.status(401).send("invalid token")
@@ -33,7 +33,12 @@ export const userAuth=async function(req,res,next){
     const user=await User.findById(_id)
     req.user=user
     if(user){
-      next()
+      if(user.role=="Admin"){
+        next()
+      }
+      else{
+        return res.status(401).send("invalid token")
+      }
     }
     else{
       return res.status(404).send("User not found")
@@ -43,3 +48,5 @@ export const userAuth=async function(req,res,next){
     res.status(500).send("Error "+error.message)
   }
 }
+
+export {adminMiddleware}
