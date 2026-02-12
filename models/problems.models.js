@@ -1,5 +1,5 @@
 import {Schema,model} from "mongoose";
-import { PROBLEM_TAGS } from "../constants"
+import { PROBLEM_TAGS } from "../constants.js"
 
 const problemsSchema=new Schema({
     slug:{
@@ -27,7 +27,7 @@ const problemsSchema=new Schema({
         type:String,
         required:[true,"problem statement is missing"],
         maxLength:[500,"problem statement cant be greater than 500 characters"],
-        minLength:[30,"problem statement cant be less than 10 charatcers"]
+        minLength:[10,"problem statement cant be less than 10 charatcers"]
     },
     constraints:{
         required:[true,"Constraints are required"],
@@ -58,6 +58,7 @@ const problemsSchema=new Schema({
         }
     },
     tags:{
+        type:[String],
         required:[true,"tags are required"],
         enum:{
             values:PROBLEM_TAGS,

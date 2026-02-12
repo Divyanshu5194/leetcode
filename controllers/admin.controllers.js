@@ -3,7 +3,11 @@ import isValidRegisteration from "../utils/validator.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { User } from "../models/users.model.js"
-
+import problemValidator from "../utils/problemvalidator.js"
+import Problems from "../models/problems.models.js"
+import { testcaseValidator , insertTestcases, verifyTestCases } from "../utils/TestcaseValidators.js"
+import { ExampleValidator, insertExampleCases } from "../utils/ExampleValidators.js"
+import { insertSolutions, solutionValidator } from "../utils/solutionValidators.js"
 
 const adminRegister=async (req,res)=>{
     try{
@@ -32,5 +36,54 @@ const adminRegister=async (req,res)=>{
     }
 }
 
+const createProblem=async (req,res)=>{
+    try{
+        const {testCases,examples,solutions}=req.body
+        testcaseValidator(testCases)
+        ExampleValidator(examples)
+        solutionValidator(solutions)
+        const {token}=req.cookies
+        const {_id:adminId}=jwt.decode(token)
+        await problemValidator({...req.body,createdBy:adminId,testCases,solutions})
 
-export {adminRegister}
+        
+        const {_id:problemid}=await Problems.create({...req.body,createdBy:adminId})
+        insertTestcases(testCases,problemid,adminId)
+        insertExampleCases(examples,problemid,adminId)
+        insertSolutions(solutions,problemid,adminId)
+        res.status(201).send("New Problem Created Succesfully")
+    }
+    catch(error){
+        console.log(error)
+        return res.status(400).send({message:(error.message || "an error occured in creation of problem")})
+    }
+}
+
+const getAllProblems=async (req,res)=>{
+    try{
+        const problems=await Problems.find({})
+        const problemsToShow=[]
+        for(const {title,difficulty} in problems){
+            problemsToShow.push({title,difficulty})
+        }
+        res.status(200).send(problemsToShow)
+    }
+    catch(error){
+        res.status(500).send({message:error.message || "error in fetching problems"})
+    }
+}
+
+const getASpecificProblem=async (req,res)=>{
+    const {slug}=req.params
+    const problem=await Problems.findOne({slug})
+    if(!problem){
+        return res.status(404).send("problem not found")
+    }
+    else{
+        problem.createdBy=undefined
+        problem.slug=undefined
+        res.status(200).send(problem)
+    }
+}
+
+export {adminRegister,createProblem,getAllProblems,getASpecificProblem}

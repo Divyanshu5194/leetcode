@@ -34,3 +34,19 @@ const exampleSchema = new Schema(
 const Examples = model("Examples", exampleSchema);
 
 export default Examples;
+
+
+
+// process.stdout.write("{")
+// for(let key of Object.keys({...exampleSchema.tree,createdBy:undefined,problem:undefined,createdAt:undefined,__v:undefined,id:undefined})){
+//   process.stdout.write(`|| !${key},`)
+// }
+// process.stdout.write("}")
+
+// process.stdout.write("{")
+// for(let key of Object.keys(exampleSchema.tree)){
+//   process.stdout.write(`${key},`)
+// }
+// process.stdout.write("}")
+
+

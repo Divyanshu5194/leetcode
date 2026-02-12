@@ -4,8 +4,9 @@ import client from "./config/redisconnect.js"
 import dns from "node:dns/promises";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { userRouter } from "./routes/userAuth.js";
+import { userRouter } from "./routes/userAuth.router.js";
 import rateLimiter from "./middlewares/rateLimiter.js"
+import { problemsRouter } from "./routes/problems.router.js";
 dns.setServers(["1.1.1.1"]);
 
 
@@ -15,11 +16,12 @@ const PORT=4000;
 
 (async ()=>{
     try{
-        await Promise.all([mongodb(),client])
+        await Promise.all([mongodb(),client,languageListFetcher()])
         server()
     }
     catch(error){
         console.log(`Error in server :${error}`)
+        process.exit(1)
     }
 })();
 
@@ -29,6 +31,7 @@ function server(){
     app.use(rateLimiter)
 
     app.use(userRouter)
+    app.use("/problems",problemsRouter)
 
     app.listen(PORT,()=>{
         console.log(`server listening on port : ${PORT}`)

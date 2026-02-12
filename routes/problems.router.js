@@ -1,6 +1,7 @@
 import express from "express"
 import { adminMiddleware } from "../middlewares/adminMiddleware.js"
-import { userAuth } from "../middlewares/auth"
+import { userAuth } from "../middlewares/auth.js"
+import { createProblem, getAllProblems, getASpecificProblem } from "../controllers/admin.controllers.js"
 
 const problemsRouter=express.Router()
 
@@ -10,10 +11,10 @@ problemsRouter.post("/create",adminMiddleware,createProblem)
 
 //update
 
-problemsRouter.patch("/update",adminMiddleware,updateProblem)
+//problemsRouter.patch("/update",adminMiddleware,updateProblem)
 
 //delete
-problemsRouter.delete("/delete",adminMiddleware,deleteProblem)
+//problemsRouter.delete("/delete",adminMiddleware,deleteProblem)
 
 //viewall
 problemsRouter.get("/all",userAuth,getAllProblems)
@@ -22,4 +23,6 @@ problemsRouter.get("/all",userAuth,getAllProblems)
 problemsRouter.get("/:slug",userAuth,getASpecificProblem)
 
 //get solved problems
-problemsRouter.get("/solved",userAuth,getAllSolvedProblems)
+//problemsRouter.get("/solved",userAuth,getAllSolvedProblems)
+
+export {problemsRouter}

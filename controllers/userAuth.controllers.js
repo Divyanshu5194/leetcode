@@ -114,7 +114,7 @@ const refresh=async (req,res)=>{
 
         try{
             const payload=jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_KEY)
-            _id=payload._id
+            _id=payload._id || payload.id
         }
         catch(error){
             return res.status(403).send("invalid user")

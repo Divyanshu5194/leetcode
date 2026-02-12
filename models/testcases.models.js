@@ -9,6 +9,7 @@ const testCaseSchema = new Schema(
     },
     order:{
         type:Number,
+        default:1
     },
     input: {
       type: String,
@@ -48,3 +49,15 @@ testCaseSchema.pre("save",async function(next){
 const TestCases=model("TestCases",testCaseSchema)
 
 export default TestCases
+
+// process.stdout.write("{")
+// for(let key of Object.keys(testCaseSchema.tree)){
+//   process.stdout.write(`|| !${key},`)
+// }
+// process.stdout.write("}")
+
+// process.stdout.write("{")
+// for(let key of Object.keys(testCaseSchema.tree)){
+//   process.stdout.write(`${key},`)
+// }
+// process.stdout.write("}")
