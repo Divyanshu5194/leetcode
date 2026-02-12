@@ -44,10 +44,10 @@ const createProblem=async (req,res)=>{
         solutionValidator(solutions)
         const {token}=req.cookies
         const {_id:adminId}=jwt.decode(token)
-        await problemValidator({...req.body,createdBy:adminId,testCases,solutions})
+        const newProblem=await problemValidator({...req.body,createdBy:adminId,testCases,solutions})
 
         
-        const {_id:problemid}=await Problems.create({...req.body,createdBy:adminId})
+        const {_id:problemid}=await Problems.create({...newProblem,createdBy:adminId})
         insertTestcases(testCases,problemid,adminId)
         insertExampleCases(examples,problemid,adminId)
         insertSolutions(solutions,problemid,adminId)

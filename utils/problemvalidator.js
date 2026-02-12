@@ -36,4 +36,6 @@ export default async function problemValidator(passedobj){
     })
 
     const submissionReasult=await submitBatch(submissionarr)
+
+    return {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions}
 }

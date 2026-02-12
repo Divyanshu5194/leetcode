@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import { userRouter } from "./routes/userAuth.router.js";
 import rateLimiter from "./middlewares/rateLimiter.js"
 import { problemsRouter } from "./routes/problems.router.js";
+import { languageListFetcher } from "./utils/languagefetcher.js";
 dns.setServers(["1.1.1.1"]);
 
 
