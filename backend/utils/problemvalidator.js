@@ -31,11 +31,7 @@ export default async function problemValidator(passedobj){
         throw new Error("description cant be greater than 500 characters")
     }
 
-    const submissionarr=solutions.map((solution)=>{
-        verifyTestCases(testCases,solution)
-    })
-
-    const submissionReasult=await submitBatch(submissionarr)
+    
 
     return {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions}
 }

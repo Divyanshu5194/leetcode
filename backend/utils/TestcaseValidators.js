@@ -1,5 +1,6 @@
 import TestCases from "../models/testcases.models.js"
 import { getIdOfLanguage, languageListFetcher } from "./languagefetcher.js"
+import { submitBatch } from "./submitBatch.utils.js"
 
 export function testcaseValidator(testCases){
     for ( const {input,output,isHidden} of testCases){
@@ -26,7 +27,15 @@ export async function verifyTestCases(testCases,Solution){
         expected_output:output
     }})
 
-    return submissions
+    const submitReasult =await submitBatch(submissions)
+
+    let tokenstr;
+
+    console.log({submitReasult})
+
+    submitReasult.forEach((token)=>{tokenstr+=`${token.value},`})
+
+    return tokenstr
 }
 
 export async function insertTestcases(testCases,problemid,userid){

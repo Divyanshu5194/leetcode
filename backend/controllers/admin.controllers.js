@@ -8,6 +8,7 @@ import Problems from "../models/problems.models.js"
 import { testcaseValidator , insertTestcases, verifyTestCases } from "../utils/TestcaseValidators.js"
 import { ExampleValidator, insertExampleCases } from "../utils/ExampleValidators.js"
 import { insertSolutions, solutionValidator } from "../utils/solutionValidators.js"
+import { submitToken } from "../utils/submitBatch.utils.js"
 
 const adminRegister=async (req,res)=>{
     try{
@@ -42,6 +43,11 @@ const createProblem=async (req,res)=>{
         testcaseValidator(testCases)
         ExampleValidator(examples)
         solutionValidator(solutions)
+        let tokenstr;
+        const submissionarr=solutions.map((solution)=>{
+            tokenstr+=verifyTestCases(testCases,solution)
+        })
+        const reasult=submitToken(tokenstr)
         const {token}=req.cookies
         const {_id:adminId}=jwt.decode(token)
         const newProblem=await problemValidator({...req.body,createdBy:adminId,testCases,solutions})
