@@ -20,6 +20,9 @@ function isValidRegisteration(req,res){
     if(!validator.isEmail(registerobj.email)){
       throw new Error("Plase enter a valid email")
     }
+    if(password.length<8 || password.length>31){
+      throw new Error("Password should be between 8-30 characters")
+    }
     
     if(!validator.isStrongPassword(registerobj.password)){
       throw new Error("Choose a Strong Password")
