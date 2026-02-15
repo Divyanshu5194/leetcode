@@ -1,6 +1,6 @@
 async function languageListFetcher(){
   try{
-    const res=await fetch("https://ce.judge0.com/languages")
+    const res=await fetch("http://localhost:2358/languages")
     const languages=await res.json();
     return languages
   }

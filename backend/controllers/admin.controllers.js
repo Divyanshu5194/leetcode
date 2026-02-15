@@ -43,11 +43,22 @@ const createProblem=async (req,res)=>{
         testcaseValidator(testCases)
         ExampleValidator(examples)
         solutionValidator(solutions)
-        let tokenstr;
-        const submissionarr=solutions.map((solution)=>{
-            tokenstr+=verifyTestCases(testCases,solution)
+        const tokenarr=await Promise.all(solutions.map(async (solution)=>
+            await verifyTestCases(testCases,solution)
+        ))
+        console.log({CREATE_PROBLEM_TOKENSTR:tokenarr})
+        const reasults=await submitToken(tokenarr.join(","))
+        console.log({reasults})
+        const errorresults=[]
+        reasults.forEach((reasult)=>{
+            if(reasult && reasult.status.id!=3){
+                errorresults.push(reasult.status)
+            }
         })
-        const reasult=submitToken(tokenstr)
+        if(errorresults.length>1){
+            return res.status(400).send(errorresults)
+        }
+
         const {token}=req.cookies
         const {_id:adminId}=jwt.decode(token)
         const newProblem=await problemValidator({...req.body,createdBy:adminId,testCases,solutions})
@@ -87,7 +98,6 @@ const getASpecificProblem=async (req,res)=>{
     }
     else{
         problem.createdBy=undefined
-        problem.slug=undefined
         res.status(200).send(problem)
     }
 }

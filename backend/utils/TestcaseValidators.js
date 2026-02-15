@@ -28,12 +28,12 @@ export async function verifyTestCases(testCases,Solution){
     }})
 
     const submitReasult =await submitBatch(submissions)
+    
+    let tokenstr="";
 
-    let tokenstr;
+    submitReasult.forEach((token)=>{tokenstr+=`${token.token},`})
 
-    console.log({submitReasult})
-
-    submitReasult.forEach((token)=>{tokenstr+=`${token.value},`})
+    console.log({VERIFY_TEST_CASES_TOKENSTR:tokenstr})
 
     return tokenstr
 }
