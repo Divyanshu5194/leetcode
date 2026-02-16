@@ -47,15 +47,15 @@ export async function submitToken(tokenstr){
 async function submitBatch(submissionarr){
 
     const options = {
-    method: 'POST',
-    url: 'http://localhost:2358/submissions/batch?base64_encoded=false',
-    headers: {
-        'x-rapidapi-key': process.env.X_RAPID_API_KEY,
-        'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
-    },
-    data:{
-        submissions:submissionarr
-    }
+        method: 'POST',
+        url: 'http://localhost:2358/submissions/batch?base64_encoded=false',
+        headers: {
+            'x-rapidapi-key': process.env.X_RAPID_API_KEY,
+            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
+        },
+        data:{
+            submissions:submissionarr
+        }
     }; 
 
     try {

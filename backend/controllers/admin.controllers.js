@@ -9,6 +9,9 @@ import { testcaseValidator , insertTestcases, verifyTestCases } from "../utils/T
 import { ExampleValidator, insertExampleCases } from "../utils/ExampleValidators.js"
 import { insertSolutions, solutionValidator } from "../utils/solutionValidators.js"
 import { submitToken } from "../utils/submitBatch.utils.js"
+import Solutions from "../models/solution.models.js"
+import TestCases from "../models/testcases.models.js"
+import Submissions from "../models/submissions.models.js"
 
 const adminRegister=async (req,res)=>{
     try{
@@ -46,9 +49,7 @@ const createProblem=async (req,res)=>{
         const tokenarr=await Promise.all(solutions.map(async (solution)=>
             await verifyTestCases(testCases,solution)
         ))
-        console.log({CREATE_PROBLEM_TOKENSTR:tokenarr})
         const reasults=await submitToken(tokenarr.join(","))
-        console.log({reasults})
         const errorresults=[]
         reasults.forEach((reasult)=>{
             if(reasult && reasult.status.id!=3){
@@ -102,4 +103,116 @@ const getASpecificProblem=async (req,res)=>{
     }
 }
 
-export {adminRegister,createProblem,getAllProblems,getASpecificProblem}
+const updateProblem=async (req,res)=>{
+    try {
+        const {slug}=req.params
+        const problem=await Problems.findOne({slug})
+        if(!problem){
+            return res.status(404).send("problem not found")
+        }
+        const {updateObj}=req.body
+        if(updateObj.testCases){
+            const solution=Solutions.findOne({problem:problem._id})
+            testcaseValidator(updateObj.testCases)
+
+            const tokenarr=await Promise.all(solution.map(async (solution)=>
+                await verifyTestCases(updateObj.testCases,solution)
+            ))
+            const reasults=await submitToken(tokenarr.join(","))
+            const errorresults=[]
+            reasults.forEach((reasult)=>{
+                if(reasult && reasult.status.id!=3){
+                    errorresults.push(reasult.status)
+                }
+            })
+            if(errorresults.length>1){
+                return res.status(400).send(errorresults)
+            }
+        }
+
+        if(updateObj.solutions){
+            const testCases=TestCases.findMany({problem:problem._id})
+            const tokenarr=await Promise.all(updateObj.solutions.map(async (solution)=>
+                await verifyTestCases(testCases,updateObj.solutions)
+            ))
+            const reasults=await submitToken(tokenarr.join(","))
+            const errorresults=[]
+            reasults.forEach((reasult)=>{
+                if(reasult && reasult.status.id!=3){
+                    errorresults.push(reasult.status)
+                }
+            })
+            if(errorresults.length>1){
+                return res.status(400).send(errorresults)
+            }
+        }
+        if(updateObj.examples){
+            ExampleValidator(updateObj.examples)
+        }
+        const updates={}
+
+        const properties=["title","difficulty","statement","constraints","description","topics","followUpQuestions","tags","testCases","solutions"]
+        for (let property of properties){
+            updates[property]= updateObj[property] || problem[property]
+        }
+        const updatedProblem=await Problems.findOneAndUpdate({slug},updates,{runValidators:true,new:true})
+        return res.status(200).send({msg:"problem updated sucessfully ",updatedProblem})
+    }
+    catch(error){
+        console.log(error)
+        return res.status(500).send("An Error Occured In Updating the problem ",error)
+    }
+}
+
+const deleteProblem=async (req,res)=>{
+    try {
+        const {slug}=req.params
+        const problem=await Problems.findOne({slug})
+        if(!problem){
+            return res.status(404).send("problem not found")
+        }
+        await Problems.findOneAndDelete({slug})
+        return res.status(200).send({msg:"Problem deteled sucessfully"})
+    }
+    catch(error){
+        return res.status(500).send({msg:"An error occured In Deleting",error:error.message})
+    }
+}
+
+const getAllSubmissions=async (req,res)=>{
+    try{
+        const {user}=req
+        const {_id:userId}=user
+
+        const submissions=await Submissions.find({user:userId})
+
+        if(submissions.length==0){
+            return res.status(404).send("No Submissions found")
+        }
+        return res.status(200).send(submissions)
+    }
+    catch(error){
+        console.log(error)
+        return res.status(500).send({msg:"An error occured",error})
+    }
+}
+
+const getAllSolvedSubmissions=async (req,res)=>{
+    try{
+        const {user}=req
+        const {_id:userId}=user
+
+        const submissions=await Submissions.find({user:userId,status:"ACCEPTED"})
+
+        if(submissions.length==0){
+            return res.status(404).send("No Submissions found")
+        }
+        return res.status(200).send(submissions)
+    }
+    catch(error){
+        console.log(error)
+        return res.status(500).send({msg:"An error occured",error})
+    }
+}
+
+export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedSubmissions}

@@ -33,8 +33,6 @@ export async function verifyTestCases(testCases,Solution){
 
     submitReasult.forEach((token)=>{tokenstr+=`${token.token},`})
 
-    console.log({VERIFY_TEST_CASES_TOKENSTR:tokenstr})
-
     return tokenstr
 }
 
