@@ -12,6 +12,7 @@ async function languageListFetcher(){
 
 const getIdOfLanguage=(languagearrr,languagetosearchfor)=>{
         const foundLanguage=languagearrr.find(language =>language.name===languagetosearchfor);
+        console.log({languagearrr,foundLanguage})
         if(!foundLanguage){
             throw new Error("invalid language")
         }

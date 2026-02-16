@@ -69,7 +69,22 @@ const problemsSchema=new Schema({
         type:Schema.Types.ObjectId,
         ref:"Users",
         required:true,
-    }
+    },
+    boilerPlateCode: {
+      type:[{
+        code:{
+          type:String,
+          required:true
+        },
+        language: {
+          type:String,
+          required:true,
+        },
+      }],
+      required: [true,"input is required"],
+      maxLength: 600,
+      trim: true,
+    },
 },{timestamps:true})
 
 const Problems=model("Problems",problemsSchema)

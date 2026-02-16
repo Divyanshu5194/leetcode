@@ -42,12 +42,12 @@ const adminRegister=async (req,res)=>{
 
 const createProblem=async (req,res)=>{
     try{
-        const {testCases,examples,solutions}=req.body
+        const {testCases,examples,solutions,boilerPlateCode}=req.body
         testcaseValidator(testCases)
         ExampleValidator(examples)
         solutionValidator(solutions)
         const tokenarr=await Promise.all(solutions.map(async (solution)=>
-            await verifyTestCases(testCases,solution)
+            await verifyTestCases(testCases,solution,boilerPlateCode)
         ))
         const reasults=await submitToken(tokenarr.join(","))
         const errorresults=[]
@@ -79,12 +79,8 @@ const createProblem=async (req,res)=>{
 
 const getAllProblems=async (req,res)=>{
     try{
-        const problems=await Problems.find({})
-        const problemsToShow=[]
-        for(const {title,difficulty} in problems){
-            problemsToShow.push({title,difficulty})
-        }
-        res.status(200).send(problemsToShow)
+        const problems=await Problems.find({}).select("title difficulty slug")
+        res.status(200).send(problems)
     }
     catch(error){
         res.status(500).send({message:error.message || "error in fetching problems"})
@@ -93,7 +89,7 @@ const getAllProblems=async (req,res)=>{
 
 const getASpecificProblem=async (req,res)=>{
     const {slug}=req.params
-    const problem=await Problems.findOne({slug})
+    const problem=await Problems.findOne({slug}).select("-createdBy -solutions -__v -updatedAt")
     if(!problem){
         return res.status(404).send("problem not found")
     }

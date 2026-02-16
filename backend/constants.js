@@ -72,4 +72,38 @@ export const PROBLEM_TAGS = [
   "Biconnected Component"
 ];
 
+const boilerPlateCodes={
+  JavaScript: (code) => 
+`const fs=require('fs');
+const input=fs.readFileSync(0,'utf8').trim().split(/\\s+/).map(Number);
 
+function solve(nums){
+${code}
+}
+
+console.log(solve(input));`
+,
+  Python: (code) => 
+`import sys
+data=list(map(int,sys.stdin.read().split()))
+
+def solve(nums):
+${code}
+
+print(solve(data))`
+,
+  c: (code) => 
+`#include <stdio.h>
+
+int solve(int arr[], int n){
+${code}
+}
+
+int main(){
+    int arr[1000], n=0;
+    while(scanf("%d",&arr[n])!=EOF) n++;
+    printf("%d", solve(arr,n));
+    return 0;
+}`
+}
+export {boilerPlateCodes}
