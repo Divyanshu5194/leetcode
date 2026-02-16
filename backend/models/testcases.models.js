@@ -12,7 +12,16 @@ const testCaseSchema = new Schema(
         default:1
     },
     input: {
-      type: String,
+      type:{
+        value:{
+          type:String,
+          required:true
+        },
+        Type: {
+          type:String,
+          required:true,
+        },
+      },
       required: [true,"input is required"],
       maxLength: 600,
       trim: true,
