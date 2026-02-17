@@ -26,21 +26,22 @@ const submissionSchema=new Schema({
     },
     status:{
         type:String,
-        enum:[
-            "PENDING",
-            "IN_QUEUE",
-            "PROCESSING",
-            "ACCEPTED",
-            "WRONG_ANSWER",
-            "TIME_LIMIT_EXCEEDED",
-            "COMPILATION_ERROR",
-            "RUNTIME_ERROR_SIGSEGV",
-            "RUNTIME_ERROR_SIGABRT",
-            "MEMORY_LIMIT_EXCEEDED",
-            "OUTPUT_LIMIT_EXCEEDED",
-            "INTERNAL_ERROR",
-            "EXEC_FORMAT_ERROR"
-        ],
+        enum:["Pending",
+  "In Queue",
+  "Processing",
+  "Accepted",
+  "Wrong Answer",
+  "Time Limit Exceeded",
+  "Compilation Error",
+  "Runtime Error (SIGSEGV)",
+  "Runtime Error (SIGXFSZ)",
+  "Runtime Error (SIGFPE)",
+  "Runtime Error (SIGABRT)",
+  "Runtime Error (NZEC)",
+  "Runtime Error (Other)",
+  "Internal Error",
+  "Exec Format Error"
+],
         required:true
     },
     memoryUsedInExecution:{
