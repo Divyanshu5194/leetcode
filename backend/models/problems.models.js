@@ -59,11 +59,7 @@ const problemsSchema=new Schema({
     },
     tags:{
         type:[String],
-        required:[true,"tags are required"],
-        enum:{
-            values:PROBLEM_TAGS,
-            message:"Invalid tag"
-        }
+        required:[true,"tags are required"]
     },
     createdBy:{
         type:Schema.Types.ObjectId,
