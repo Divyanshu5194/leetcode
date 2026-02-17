@@ -40,7 +40,7 @@ const adminRegister=async (req,res)=>{
     }
 }
 
-const   createProblem=async (req,res)=>{
+const createProblem=async (req,res)=>{
     try{
         const {testCases,examples,solutions,boilerPlateCode}=req.body
         testcaseValidator(testCases)
@@ -151,6 +151,7 @@ const updateProblem=async (req,res)=>{
         for (let property of properties){
             updates[property]= updateObj[property] || problem[property]
         }
+        console.log({updates})
         const updatedProblem=await Problems.findOneAndUpdate({slug},updates,{runValidators:true,new:true})
         return res.status(200).send({msg:"problem updated sucessfully ",updatedProblem})
     }

@@ -8,6 +8,7 @@ import { userRouter } from "./routes/userAuth.router.js";
 import rateLimiter from "./middlewares/rateLimiter.js"
 import { problemsRouter } from "./routes/problems.router.js";
 import { languageListFetcher } from "./utils/languagefetcher.js";
+import { submitRouter } from "./routes/submit.router.js";
 dns.setServers(["1.1.1.1"]);
 
 
@@ -33,6 +34,7 @@ function server(){
 
     app.use(userRouter)
     app.use("/problems",problemsRouter)
+    app.use(submitRouter)               
 
     app.listen(PORT,()=>{
         console.log(`server listening on port : ${PORT}`)
