@@ -27,6 +27,7 @@ const submissionSchema=new Schema({
     status:{
         type:String,
         enum:[
+            "PENDING",
             "IN_QUEUE",
             "PROCESSING",
             "ACCEPTED",
