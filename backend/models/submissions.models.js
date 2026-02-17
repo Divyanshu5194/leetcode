@@ -48,7 +48,11 @@ const submissionSchema=new Schema({
         type:Number,
         required:true
     },
-    testCasesRun:{
+    testCasesPassed:{
+        type:Number,
+        required:true
+    },
+    totalTestCases:{
         type:Number,
         required:true
     }
