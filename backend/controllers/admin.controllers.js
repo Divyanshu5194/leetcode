@@ -40,7 +40,7 @@ const adminRegister=async (req,res)=>{
     }
 }
 
-const createProblem=async (req,res)=>{
+const   createProblem=async (req,res)=>{
     try{
         const {testCases,examples,solutions,boilerPlateCode}=req.body
         testcaseValidator(testCases)

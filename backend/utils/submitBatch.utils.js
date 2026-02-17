@@ -4,16 +4,15 @@ export async function submitToken(tokenstr){
 
     const options = {
         method: 'GET',
-        url: `http://localhost:2358/submissions/batch?tokens=${tokenstr.trim(",")}&base64_encoded=false&fields=token,stdout,stderr,status_id,language_id`,
-        
+        url: 'http://localhost:2358/submissions/batch',
         params: {
             tokens: tokenstr,
-            base64_encoded: false,
+            base64_encoded: 'false',
             fields: '*'
         },
         headers: {
-            'x-rapidapi-key': process.env.X_RAPID_API_KEY,
-            'x-rapidapi-host': 'judge029.p.rapidapi.com'
+            'x-rapidapi-key': 'ab99c6ec42mshfd636ec7c6687efp1b9043jsna684835b0591',
+            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
         }
     };
 
@@ -27,7 +26,7 @@ export async function submitToken(tokenstr){
             const response = await axios.request(options);
             const {submissions}=response.data
             for (let submission of submissions){
-                if(submission && submission.status.id<4){
+                if(submission && submission.status.id<3){
                     await sleep(1000)
                     return await checkTokens()
                 }
@@ -48,15 +47,19 @@ async function submitBatch(submissionarr){
 
     const options = {
         method: 'POST',
-        url: 'http://localhost:2358/submissions/batch?base64_encoded=false',
-        headers: {
-            'x-rapidapi-key': process.env.X_RAPID_API_KEY,
-            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
+        url: 'http://localhost:2358/submissions/batch',
+        params: {
+            base64_encoded: 'false'
         },
-        data:{
+        headers: {
+            'x-rapidapi-key': 'ab99c6ec42mshfd636ec7c6687efp1b9043jsna684835b0591',
+            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
+            'Content-Type': 'application/json'
+        },
+        data: {
             submissions:submissionarr
         }
-    }; 
+        }
 
     try {
         const response = await axios.request(options);
