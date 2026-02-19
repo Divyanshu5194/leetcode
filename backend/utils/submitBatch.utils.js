@@ -7,7 +7,7 @@ export async function submitToken(tokenstr){
         url: 'http://localhost:2358/submissions/batch',
         params: {
             tokens: tokenstr,
-            base64_encoded: 'false',
+            base64_encoded: 'true',
             fields: '*'
         },
         headers: {

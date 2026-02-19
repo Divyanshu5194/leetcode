@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const userSchema=new mongoose.Schema({
     username:{
@@ -37,8 +37,19 @@ const userSchema=new mongoose.Schema({
         default:"User"
     },
     solved:{
-        type:[String]
+        type:[{
+            type:Schema.Types.ObjectId,
+            ref:"Problems",
+            unique:true
+        }]
     }
 },{timestamps:true})
+
+userSchema.post("findOneAndDelete",async (document)=>{
+    if(doc){
+        await mongoose.model("Submissions").deleteMany({_id:document._id})
+        await mongoose.model("Refreshtokens").deleteMany({_id:document._id})
+    }
+})
 
 export const User=mongoose.model("User",userSchema)

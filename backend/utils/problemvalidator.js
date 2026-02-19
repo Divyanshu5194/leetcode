@@ -3,14 +3,14 @@ import Problems from "../models/problems.models.js"
 
 export default async function problemValidator(passedobj){
 
-    const {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions}=passedobj
+    const {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions,boilerPlateCodes}=passedobj
     const existingProblem=await Problems.findOne({slug})
 
     if(existingProblem){
         throw new Error("Problem with this slug already exists")
     }
 
-    if(!slug || !title || !difficulty || !statement || !constraints || !description || !topics || !followUpQuestions || !tags){
+    if(!slug || !title || !difficulty || !statement || !constraints || !description || !topics || !followUpQuestions || !tags || !boilerPlateCodes) {
         throw new Error("please fill all the feilds")
     }
 
@@ -32,5 +32,5 @@ export default async function problemValidator(passedobj){
 
     
 
-    return {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions}
+    return {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions,boilerPlateCodes}
 }
