@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import Refreshtokens from "../models/refreshToken.model.js"
 import client from "../config/redisconnect.js"
+import Submissions from "../models/submissions.models.js"
 
 const register=async (req,res)=>{
     try{
@@ -169,4 +170,15 @@ const getProfile=async (req,res)=>{
     }
 }
 
-export {register,login,logout,refresh,getProfile}
+const deleteProfile=async (req,res)=>{
+    try{
+        const {_id:userId}=user
+        await User.findOneAndDelete({_id:userId})
+        res.status(200).send({msg:"deleted sucessfuilly"})
+    }
+    catch(error){
+        res.status(500).send({error:error.message||"a problem occured in deleteing your accounnt"})
+    }
+}
+
+export {register,login,logout,refresh,getProfile,deleteProfile}
