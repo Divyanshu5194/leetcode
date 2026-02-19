@@ -32,4 +32,7 @@ problemsRouter.get("/solved",userAuth,getAllSolvedProblems)
 //get a specific problem
 problemsRouter.get("/:slug",userAuth,getASpecificProblem)
 
+//get all submissions related to a problem
+problemsRouter.get("/:slug",userAuth,getSubmissionsForAProblem)
+
 export {problemsRouter}

@@ -212,4 +212,16 @@ const getAllSolvedProblems=async (req,res)=>{
     }
 }
 
+const getSubmissionsForAProblem=async (req,res)=>{
+    try{
+        const {_id:userId}=req.user
+        const {_id:problemId}=req.body.problem
+        const submissionsOfAProblem=await Submissions.find({problem:problemId,user:userId})
+        res.status(200).send({msg:"sucessfully fetched submissions",data:submissionsOfAProblem})
+    }
+    catch(error){
+        res.status(500).send({msg:"an error occured",error:error.message||"can`t fetch your submissions"})
+    }
+}
+
 export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedProblems}

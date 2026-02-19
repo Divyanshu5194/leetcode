@@ -26,10 +26,10 @@ const register=async (req,res)=>{
 
         res.cookie("acesstoken",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
         res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
-        return res.status(201).send("User Registeration sucessful")
+        return res.status(201).send({msg:"user registred sucessful",data:{username:existinguser.username,email:existinguser.email}})
     }
     catch(error){
-        res.status(400).send(`Error in registration : ${error}`)
+        res.status(500).send({msg:"an error occured",error:error.message || error||"An Error Occured"})
     }
 }
 
@@ -61,11 +61,23 @@ const login=async (req,res)=>{
 
             res.cookie("token",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
             res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
-            return res.status(200).send("Login Sucessful!")
+            return res.status(200).send({msg:"login Sucessful",data:{username:existinguser.username,email:existinguser.email}})
         }
     }
     catch(error){
-        res.status(403).send(`error in login : ${error}`)
+        res.status(500).send({msg:"error in logging you in",error:error.message||error||"an error occured"})
+    }
+}
+
+const checkAuth=async (req,res)=>{
+    try{
+        if(req.user){
+            const {user}=req
+            res.status(200).send({msg:"sucess",data:{username:user.username,email:user.email}})
+        }
+    }
+    catch(error){
+        res.status(500).send({msg:"an error occured",error:error.message||error||"an error occured"})
     }
 }
 
@@ -181,4 +193,4 @@ const deleteProfile=async (req,res)=>{
     }
 }
 
-export {register,login,logout,refresh,getProfile,deleteProfile}
+export {register,login,logout,refresh,getProfile,deleteProfile,checkAuth}

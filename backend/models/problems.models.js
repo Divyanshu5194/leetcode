@@ -1,5 +1,4 @@
 import {Schema,model} from "mongoose";
-import { PROBLEM_TAGS } from "../constants.js"
 
 const problemsSchema=new Schema({
     slug:{
