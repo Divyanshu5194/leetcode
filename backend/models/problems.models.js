@@ -66,7 +66,7 @@ const problemsSchema=new Schema({
         ref:"Users",
         required:true,
     },
-    boilerPlateCode: {
+    boilerPlateCodes: {
       type:[{
         code:{
           type:String,
