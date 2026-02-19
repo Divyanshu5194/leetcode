@@ -31,16 +31,22 @@ export async function verifyTestCases(testCases,Solution,boilerPlateCodes){
             return typeCaster[inputobj.dataType](inputobj.value)
         })
         const languageName=Solution.language.split(" ")[0]
-        const boilerPlateCode=boilerPlateCodes.find(({language})=>language==languageName)
+        //const boilerPlateCode=boilerPlateCodes.find(({language})=>language==languageName)
         const expected_output_value=typeCaster[output.dataType](output.value)
+    //     console.log({
+    //     language_id:languageId, 
+    //     source_code:boilerPlateCode.code.replace("{solution}",(Solution.solution || Solution.code)),
+    //     stdin:inputvalue.join(" "),
+    //     expected_output:expected_output_value,
+    // })
         
         return {
         language_id:languageId, 
-        source_code:Solution.solution,
+        source_code:Solution.solution || Solution.code,
         stdin:inputvalue.join(" "),
         expected_output:expected_output_value,
     }})
-    console.log({submissions})
+    
 
     const submitReasult =await submitBatch(submissions)
     
