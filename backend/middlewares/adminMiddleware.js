@@ -37,7 +37,7 @@ const adminMiddleware=async function(req,res,next){
         next()
       }
       else{
-        return res.status(401).send("invalid token")
+        return res.status(401).send("You Are not Authorized to acess this route")
       }
     }
     else{
