@@ -42,12 +42,12 @@ const adminRegister=async (req,res)=>{
 
 const createProblem=async (req,res)=>{
     try{
-        const {testCases,examples,solutions,boilerPlateCode}=req.body
+        const {testCases,examples,solutions,boilerPlateCodes}=req.body
         testcaseValidator(testCases)
         ExampleValidator(examples)
         solutionValidator(solutions)
         const tokenarr=await Promise.all(solutions.map(async (solution)=>
-            await verifyTestCases(testCases,solution,boilerPlateCode)
+            await verifyTestCases(testCases,solution,boilerPlateCodes)
         ))
         const reasults=await submitToken(tokenarr.join(","))
         const errorresults=[]
@@ -194,22 +194,22 @@ const getAllSubmissions=async (req,res)=>{
     }
 }
 
-const getAllSolvedSubmissions=async (req,res)=>{
+const getAllSolvedProblems=async (req,res)=>{
+    
     try{
-        const {user}=req
-        const {_id:userId}=user
-
-        const submissions=await Submissions.find({user:userId,status:"ACCEPTED"})
-
-        if(submissions.length==0){
-            return res.status(404).send("No Submissions found")
+        const {_id:userId}=req.user
+        const {solved:solved_Problems}=await User.findById(userId).populate({
+            path:"solved",
+            select:"_id slug title difficulty "
+        })
+        if(solved_Problems.length==0){
+            return res.status(404).send("you havent solved any problems")
         }
-        return res.status(200).send(submissions)
+        res.status(200).send({msg:"sucess",data:solved_Problems})
     }
     catch(error){
-        console.log(error)
-        return res.status(500).send({msg:"An error occured",error})
+        res.status(500).send({msg:"cant get all solves problems",error:error.message||"a problem occured in getting all solved problems"})
     }
 }
 
-export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedSubmissions}
+export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedProblems}
