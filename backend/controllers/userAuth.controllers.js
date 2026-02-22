@@ -8,14 +8,15 @@ import Submissions from "../models/submissions.models.js"
 
 const register=async (req,res)=>{
     try{
-        isValidRegisteration(req,res)
+        try{isValidRegisteration(req,res)}
+        catch(error){console.log({error});return res.status(400).send({msg:"user registred failed",error:error.message || error || "Ensure all feilds are filled correctly"})}
         const {username,email,password}=req.body
         const hashedpassword=await bcrypt.hash(password,10)
         const existingUser=await User.findOne({
                 $or:[{username},{email}]
         })
         if(existingUser){
-            throw new Error("Users with the username or email already exists")
+            return res.status(400).send({msg:"user already exists",error:error.message || error || "user already exists"})
         }
         
         const newuser=await User.create({username,email,password:hashedpassword,role:"User"})
@@ -26,33 +27,34 @@ const register=async (req,res)=>{
 
         res.cookie("acesstoken",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
         res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
-        return res.status(201).send({msg:"user registred sucessful",data:{username:existinguser.username,email:existinguser.email}})
+        return res.status(201).send({msg:"user registred sucessful",data:{username:newuser.username,email:newuser.email}})
     }
     catch(error){
-        res.status(500).send({msg:"an error occured",error:error.message || error||"An Error Occured"})
+        res.status(500).send({msg:"an error occured",error:error.message || error || "An Error Occured"})
     }
 }
 
 const login=async (req,res)=>{
     try{
+        console.log({incomingData:req.body})
         const {login,password}=req.body
         const query=login.includes("@") ? {email:login} :{username:login}
-
+        console.log({query})
         if(!login || !password){
-            throw new Error("Fill Out all the feilds") 
+            return res.status(400).send("Fill Out all the feilds") 
         }
         
         const existinguser=await User.findOne(query).select("+password")
 
 
         if(!existinguser){
-            throw new Error("Invalid Credentials!")
+            return res.status(400).send("Invalid Credentials!")
         }
 
         else{
             const acess=await bcrypt.compare(password,existinguser.password)
             if(!acess){
-                throw new Error("Invalid Credentials!")
+                return res.status(400).send("Invalid Credentials!")
             }
 
             const token=jwt.sign({_id:existinguser._id,role:existinguser.role},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
@@ -61,10 +63,12 @@ const login=async (req,res)=>{
 
             res.cookie("token",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
             res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
+            console.log("acess granted")
             return res.status(200).send({msg:"login Sucessful",data:{username:existinguser.username,email:existinguser.email}})
         }
     }
     catch(error){
+        console.log("error in login",error)
         res.status(500).send({msg:"error in logging you in",error:error.message||error||"an error occured"})
     }
 }
@@ -77,6 +81,7 @@ const checkAuth=async (req,res)=>{
         }
     }
     catch(error){
+        console.log("error occured in check auth",error)
         res.status(500).send({msg:"an error occured",error:error.message||error||"an error occured"})
     }
 }
