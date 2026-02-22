@@ -9,7 +9,7 @@ export default async function rateLimiter(req,res,next) {
         const currenttime=Math.floor(Date.now()/1000)
 
         const windowSize=3600
-        const maxRequestsAllowed=150
+        const maxRequestsAllowed=100
         const windowTime=currenttime-windowSize;
 
         await redisClient.zRemRangeByScore(key,0,windowTime);
@@ -27,7 +27,7 @@ export default async function rateLimiter(req,res,next) {
             "WITHSCORES"
         ]);
 
-        if(lastAcessTime && currenttime-lastAcessTime<3){
+        if(lastAcessTime && currenttime-lastAcessTime<2){
            return res.status(429).send("Please wait sometime before another request")
         }
 
