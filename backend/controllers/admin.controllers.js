@@ -224,4 +224,4 @@ const getSubmissionsForAProblem=async (req,res)=>{
     }
 }
 
-export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedProblems}
+export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedProblems,getSubmissionsForAProblem}
