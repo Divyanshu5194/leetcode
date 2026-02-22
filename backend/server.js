@@ -9,6 +9,7 @@ import rateLimiter from "./middlewares/rateLimiter.js"
 import { problemsRouter } from "./routes/problems.router.js";
 import { languageListFetcher } from "./utils/languagefetcher.js";
 import { submitRouter } from "./routes/submit.router.js";
+import cors from "cors"
 dns.setServers(["1.1.1.1"]);
 
 
@@ -30,7 +31,11 @@ const PORT=4000;
 function server(){
     app.use(express.json())
     app.use(cookieParser())
-    app.use(rateLimiter)
+    //pp.use(rateLimiter)
+    app.use(cors({
+        origin:process.env.ALLOWED_ORIGIN,
+        credentials:true
+    }))
 
     app.use(userRouter)
     app.use("/problems",problemsRouter)
