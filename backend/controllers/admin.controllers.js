@@ -80,7 +80,7 @@ const createProblem=async (req,res)=>{
 const getAllProblems=async (req,res)=>{
     try{
         const problems=await Problems.find({}).select("title difficulty slug")
-        res.status(200).send(problems)
+        res.status(200).send({msg:"sucessful",data:problems})
     }
     catch(error){
         res.status(500).send({message:error.message || "error in fetching problems"})
@@ -95,7 +95,7 @@ const getASpecificProblem=async (req,res)=>{
     }
     else{
         problem.createdBy=undefined
-        res.status(200).send(problem)
+        res.status(200).send({msg:"Sucessfull",data:problem})
     }
 }
 
@@ -184,9 +184,9 @@ const getAllSubmissions=async (req,res)=>{
         const submissions=await Submissions.find({user:userId})
 
         if(submissions.length==0){
-            return res.status(404).send("No Submissions found")
+            return res.status(404).send({msg:"succesfull",data:"No Submissions found"})
         }
-        return res.status(200).send(submissions)
+        return res.status(200).send({msg:"succesfull",data:submissions})
     }
     catch(error){
         console.log(error)
@@ -203,7 +203,7 @@ const getAllSolvedProblems=async (req,res)=>{
             select:"_id slug title difficulty "
         })
         if(solved_Problems.length==0){
-            return res.status(404).send("you havent solved any problems")
+            return res.status(200).send({msg:"sucess",data:"You Havent Solved Any Problems"})
         }
         res.status(200).send({msg:"sucess",data:solved_Problems})
     }

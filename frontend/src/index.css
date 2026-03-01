@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+*{
+    user-select: none;
+    -webkit-user-drag: none;
+}

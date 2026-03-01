@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 export default function Login(){
     const dispatch=useDispatch()
-    const {isAuthenticated,error}=useSelector((state)=>state.auth)
+    const {isAuthenticated,error,loading}=useSelector((state)=>state.auth)
     const navigate=useNavigate()
     console.log({isAuthenticated})
 
@@ -56,7 +56,7 @@ export default function Login(){
 
                     {error && <p className='text-red-700' >{error}</p>}
 
-                    <input className='btn btn-active bg-blue-400 text-white w-full' type="submit" />
+                    <input className='btn btn-active bg-blue-400 text-white w-full' disabled={loading} type="submit" />
                 </form>
             </div>
         </div>

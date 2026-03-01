@@ -1,5 +1,6 @@
 import { createAsyncThunk,createSlice} from "@reduxjs/toolkit"
 import { axiosClient } from "../../utils/axiosClient"
+import axios from "axios"
 
 const login=createAsyncThunk("/auth/login",async (loginInfo,{rejectWithValue})=>{
     try{
@@ -55,13 +56,27 @@ const logout=createAsyncThunk("/auth/logout",async (_,{rejectWithValue})=>{
     }
 })
 
+const fetchLanguages=createAsyncThunk("/auth/languages",async(_,{rejectWithValue})=>{
+    try{
+        console.log("fetching language list")
+        const response=await axios.get("http://localhost:2358/languages/")
+        console.log({LANGUAGE_FETCHER_RESPONSE:response})
+        return response.data
+    }
+    catch(error){
+        console.log({error})
+        return rejectWithValue(error.response.data)
+    }
+})
+
 const authSlice=createSlice({
     name:"auth",
     initialState:{
         error:null,
         loading:false,
         isAuthenticated:false,
-        user:null
+        user:null,
+        languageArray:[]
     },
     reducers:{},
     extraReducers:(builder)=>{
@@ -127,10 +142,24 @@ const authSlice=createSlice({
             
         })
         builder.addCase(refresh.fulfilled,(state,action)=>{
+            console.log({LANGUAGE_LIST:action.payload})
             state.loading=false
             state.isAuthenticated=!!action.payload
         })
         builder.addCase(refresh.rejected,(state,action)=>{
+            state.loading=false
+            state.error=action.payload || "Something went wrong"
+        })
+
+        //languageArray
+        builder.addCase(fetchLanguages.pending,(state,action)=>{
+            state.loading=true
+        })
+        builder.addCase(fetchLanguages.fulfilled,(state,action)=>{
+            state.loading=false
+            state.languageArray=action.payload
+        })
+        builder.addCase(fetchLanguages.rejected,(state,action)=>{
             state.loading=false
             state.error=action.payload || "Something went wrong"
         })
@@ -140,4 +169,4 @@ const authSlice=createSlice({
 
 const authReducer=authSlice.reducer
 
-export {authReducer,checkAuth,login,logout,register}
+export {authReducer,checkAuth,login,logout,register,fetchLanguages}

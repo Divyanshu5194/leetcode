@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 
 export default function Signup(){
     const dispatch=useDispatch()
-    const {isAuthenticated,error}=useSelector((state)=>state.auth)
+    const {isAuthenticated,error,loading}=useSelector((state)=>state.auth)
     const navigate=useNavigate()
 
     console.log({isAuthenticated,error})
@@ -84,7 +84,7 @@ export default function Signup(){
 
                     {error && <p className='text-red-700' >{error}</p>}
 
-                    <input className='btn btn-active bg-blue-400 text-white w-full' type="submit" />
+                    <input className='btn btn-active bg-blue-400 text-white w-full' disabled={loading} type="submit" />
                 </form>
             </div>
         </div>

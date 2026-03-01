@@ -52,6 +52,7 @@ const submit=async (req,res)=>{
 
 const runCode=async (req,res)=>{
     try{
+        console.log({RUNCODE_INPUT_:req.body.solution.code})
         const {user} =req
         const {_id:userId}=user
         const {slug,solution}=req.body
@@ -63,14 +64,19 @@ const runCode=async (req,res)=>{
         const testCases=await TestCases.find({problem:problemId})
         const tokenstr=await verifyTestCases(testCases,solution,boilerPlateCodes)
         const results=await submitToken(tokenstr)
+        //console.log({RUN_RESULTS:results})
         for (let result of results){
+            //console.log({REASULT_STATUS_DESC:result.status.description})
+            
             if(result.status.id!=3){
-                return res.status(400).send(result.status.description)
+                return res.status(400).send({msg:"error occured",data:result.status.description})
             }
         }
-        res.status(200).send("code run sucessfully")
+        console.log({RUN_RESULTS:results})
+        res.status(200).send({msg:"Sucess",data:results})
     }
     catch(error){
+        console.log("error in running code")
         res.status(500).send({msg:"error occured",error:error.message||"unable to run your code"})
     }
 }
