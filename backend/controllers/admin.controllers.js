@@ -12,6 +12,7 @@ import { submitToken } from "../utils/submitBatch.utils.js"
 import Solutions from "../models/solution.models.js"
 import TestCases from "../models/testcases.models.js"
 import Submissions from "../models/submissions.models.js"
+import { languageListFetcher } from "../utils/languagefetcher.js"
 
 const adminRegister=async (req,res)=>{
     try{
@@ -209,6 +210,16 @@ const getAllSolvedProblems=async (req,res)=>{
     }
     catch(error){
         res.status(500).send({msg:"cant get all solves problems",error:error.message||"a problem occured in getting all solved problems"})
+    }
+}
+
+const getAllSupportedLanguages=async (req,res)=>{
+    try{
+        const languages=await languageListFetcher()
+        res.status(200).send({msg:"fetched languages sucessfully",data:languages})
+    }
+    catch(error){
+        res.status({msg:"can't fetch languagess",error:error.message || error || "An Error Occured In Fetching Languages"})
     }
 }
 

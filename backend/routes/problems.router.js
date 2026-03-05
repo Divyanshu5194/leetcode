@@ -9,6 +9,10 @@ const problemsRouter=express.Router()
 
 problemsRouter.post("/create",adminMiddleware,createProblem)
 
+//getAllSupportedLanguages
+
+problemsRouter.get("/languages",getAllSupportedLanguages)
+
 //update
 
 problemsRouter.patch("/update/:slug",adminMiddleware,updateProblem)
