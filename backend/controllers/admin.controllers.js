@@ -173,7 +173,7 @@ const deleteProblem=async (req,res)=>{
         return res.status(200).send({msg:"Problem deteled sucessfully"})
     }
     catch(error){
-        return res.status(500).send({msg:"An error occured In Deleting",error:error.message})
+        return res.status(500).send({msg:"An error occured In Deleting",error:error || error.message || "An Error Occured"})
     }
 }
 
@@ -235,4 +235,4 @@ const getSubmissionsForAProblem=async (req,res)=>{
     }
 }
 
-export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedProblems,getSubmissionsForAProblem}
+export {adminRegister,createProblem,getAllProblems,getASpecificProblem ,updateProblem,deleteProblem,getAllSubmissions,getAllSolvedProblems,getSubmissionsForAProblem,getAllSupportedLanguages}
