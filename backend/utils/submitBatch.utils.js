@@ -4,7 +4,7 @@ export async function submitToken(tokenstr){
 
     const options = {
         method: 'GET',
-        url: 'http://localhost:2358/submissions/batch',
+        url: `${process.env.JUDGE0_URL}/submissions/batch`,
         params: {
             tokens: tokenstr,
             base64_encoded: 'true',
@@ -47,7 +47,7 @@ async function submitBatch(submissionarr){
 
     const options = {
         method: 'POST',
-        url: 'http://localhost:2358/submissions/batch',
+        url: `${process.env.JUDGE0_URL}/submissions/batch`,
         params: {
             base64_encoded: 'false'
         },
