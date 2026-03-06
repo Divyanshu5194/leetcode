@@ -27,7 +27,7 @@ const register=async (req,res)=>{
 
         res.cookie("acesstoken",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
         res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
-        return res.status(201).send({msg:"user registred sucessful",data:{username:newuser.username,email:newuser.email}})
+        return res.status(201).send({msg:"user registred sucessful",data:{username:newuser.username,email:newuser.email,role:newuser.role}})
     }
     catch(error){
         res.status(500).send({msg:"an error occured",error:error.message || error || "An Error Occured"})
@@ -64,7 +64,7 @@ const login=async (req,res)=>{
             res.cookie("token",token,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
             res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
             console.log("acess granted")
-            return res.status(200).send({msg:"login Sucessful",data:{username:existinguser.username,email:existinguser.email}})
+            return res.status(200).send({msg:"login Sucessful",data:{username:existinguser.username,email:existinguser.email,role:existinguser.role}})
         }
     }
     catch(error){
@@ -77,7 +77,7 @@ const checkAuth=async (req,res)=>{
     try{
         if(req.user){
             const {user}=req
-            res.status(200).send({msg:"sucess",data:{username:user.username,email:user.email}})
+            res.status(200).send({msg:"sucess",data:{username:user.username,email:user.email,role:user.role}})
         }
     }
     catch(error){
