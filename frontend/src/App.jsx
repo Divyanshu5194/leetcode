@@ -23,14 +23,14 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={ (isAuthenticated)?(user.role=="Admin" ? <Navigate to={"/admin"}></Navigate> : <Homepage></Homepage>):(<Navigate to={"/signup"}></Navigate>)}></Route>
+        <Route path='/' element={ (isAuthenticated)?(user?.role=="Admin" ? <Navigate to={"/admin"}></Navigate> : <Homepage></Homepage>):(<Navigate to={"/signup"}></Navigate>)}></Route>
         <Route path='/login' element={ (isAuthenticated)?(<Navigate to={"/"}></Navigate>):(<Login></Login>)}></Route>
         <Route path='/signup' element={(isAuthenticated)?(<Navigate to={"/"}></Navigate>):(<Signup></Signup>)}></Route>
         <Route path='/signup' element={(isAuthenticated)?(<Navigate to={"/"}></Navigate>):(<Signup></Signup>)}></Route>
         <Route path='/problem/:slug' element={ (isAuthenticated)?(<ProblemPage></ProblemPage>):(<Navigate to={"/signup"}></Navigate>)}></Route>
-        <Route path='/admin' element={(user && user.role=="Admin") ? <Adminpage></Adminpage> : <Navigate to={"/"}></Navigate>}></Route>
-        <Route path='/create' element={(user && user.role=="Admin") ? <CreateProblem></CreateProblem> : <Navigate to={"/"}></Navigate>}></Route>
-        <Route path='/problems/edit/:slug' element={(user && user.role=="Admin") ? <EditPage></EditPage> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='/admin' element={(user && user?.role=="Admin") ? <Adminpage></Adminpage> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='/create' element={(user && user?.role=="Admin") ? <CreateProblem></CreateProblem> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='/problems/edit/:slug' element={(user && user?.role=="Admin") ? <EditPage></EditPage> : <Navigate to={"/"}></Navigate>}></Route>
       </Routes>
     </>
   )
