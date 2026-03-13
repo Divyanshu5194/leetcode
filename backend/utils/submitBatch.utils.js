@@ -7,13 +7,13 @@ export async function submitToken(tokenstr){
         url: `${process.env.JUDGE0_URL}/submissions/batch`,
         params: {
             tokens: tokenstr,
-            base64_encoded: 'true',
+            base64_encoded: 'false',
             fields: '*'
         },
-        headers: {
-            'x-rapidapi-key': 'ab99c6ec42mshfd636ec7c6687efp1b9043jsna684835b0591',
-            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
-        }
+        // headers: {
+        //     'x-rapidapi-key': '75c622b151msh55105531490d8dep1dda71jsn872202f61681',
+        //     'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
+        // }
     };
 
     function sleep(ms) {
@@ -51,16 +51,16 @@ async function submitBatch(submissionarr){
         params: {
             base64_encoded: 'false'
         },
-        headers: {
-            'x-rapidapi-key': 'ab99c6ec42mshfd636ec7c6687efp1b9043jsna684835b0591',
-            'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
-            'Content-Type': 'application/json'
-        },
+        // headers: {
+        //     'x-rapidapi-key': '75c622b151msh55105531490d8dep1dda71jsn872202f61681',
+        //     'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
+        //     'Content-Type': 'application/json'
+        // },
         data: {
             submissions:submissionarr
         }
         }
-
+        console.log({DATA_SENT_TO_JUDGE0:options})
     try {
         const response = await axios.request(options);
         return response.data;

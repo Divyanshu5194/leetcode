@@ -15,6 +15,7 @@ export function testcaseValidator(testCases){
 }
 
 export async function verifyTestCases(testCases,Solution,boilerPlateCodes){
+    console.log({testCases,Solution})
     const lannguages=await languageListFetcher();
 
     const languageId=getIdOfLanguage(lannguages,Solution.language)
@@ -39,14 +40,13 @@ export async function verifyTestCases(testCases,Solution,boilerPlateCodes){
     //     stdin:inputvalue.join(" "),
     //     expected_output:expected_output_value,
     // })
-        
         return {
         language_id:languageId, 
         source_code:Solution.solution || Solution.code,
         stdin:inputvalue.join(" "),
         expected_output:expected_output_value,
     }})
-    
+    console.log({submissions})
 
     const submitReasult =await submitBatch(submissions)
     
