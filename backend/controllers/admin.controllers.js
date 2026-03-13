@@ -225,8 +225,10 @@ const getAllSupportedLanguages=async (req,res)=>{
 
 const getSubmissionsForAProblem=async (req,res)=>{
     try{
+        console.log("Get Submissions route hit")
         const {_id:userId}=req.user
-        const {_id:problemId}=req.body.problem
+        const {id:problemId}=req.params
+        console.log({userId,problemId})
         const submissionsOfAProblem=await Submissions.find({problem:problemId,user:userId})
         res.status(200).send({msg:"sucessfully fetched submissions",data:submissionsOfAProblem})
     }

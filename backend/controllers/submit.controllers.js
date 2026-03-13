@@ -21,7 +21,7 @@ const submit=async (req,res)=>{
         const tokenstr=await verifyTestCases(testCases,solution,boilerPlateCodes)
         const results=await submitToken(tokenstr)
         const runInfo={}
-        for (const reasult of results){
+        for (let reasult of results){
             console.log(reasult)
             if(reasult.status.id==3){
                 runInfo.timeForExecution=runInfo.timeForExecution+Number(reasult.time) || Number(reasult.time)
@@ -62,7 +62,10 @@ const runCode=async (req,res)=>{
             throw new Error("please ensure all feilds are filled")
         }
         const testCases=await TestCases.find({problem:problemId})
+        console.log({testCases})
+        console.log("testcase verification started at function runcode")
         const tokenstr=await verifyTestCases(testCases,solution,boilerPlateCodes)
+        console.log("testcase verification completed at function runcode")
         const results=await submitToken(tokenstr)
         //console.log({RUN_RESULTS:results})
         for (let result of results){
@@ -77,7 +80,7 @@ const runCode=async (req,res)=>{
     }
     catch(error){
         console.log("error in running code")
-        res.status(500).send({msg:"error occured",error:error.message||"unable to run your code"})
+        res.status(500).send({msg:"error occured",error:"unable to run your code"})
     }
 }
 
