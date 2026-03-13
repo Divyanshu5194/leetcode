@@ -2,10 +2,12 @@ import { useState } from "react";
 
 export default function Popup({message,sucessflag}){
     const [visible,setVisible]=useState(true)
-    if(sucessflag)
+    if(visible){if(sucessflag)
         return (
             <>
-                <div className={`toast toast-top toast-center z-[100] min-w-[300px] ${visible ? "flex" : "hidden"}`}>
+                <div className={`toast toast-top toast-center z-[100] min-w-[300px] relative z-50 ${visible ? "flex" : "hidden"}`} onClick={()=>{
+                    console.log("element clicked")
+                }}>
                 <div className="alert alert-success shadow-lg flex justify-between items-center text-white p-3">
                     <div className="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -15,7 +17,7 @@ export default function Popup({message,sucessflag}){
                     </div>
                     
                     {/* The Cross Button */}
-                    <button className="btn btn-ghost btn-xs btn-circle text-white hover:bg-black/20" onClick={(e)=>{setVisible(false)}}>
+                    <button className="btn btn-ghost btn-xs btn-circle text-white hover:bg-black/20" onClick={(e)=>{console.log("popup shpuld be invisible");setVisible(false)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -25,7 +27,9 @@ export default function Popup({message,sucessflag}){
             </>
         );
     return (
-        <div className={`toast toast-top toast-center z-[100] min-w-[300px] ${visible ? "flex" : "hidden"}`}>
+        <div className={`toast toast-top toast-center z-[100] min-w-[300px] relative z-50 ${visible ? "flex" : "hidden"}`} onClick={()=>{
+                    console.log("element clicked")
+                }}>
         <div className="alert alert-error shadow-lg flex justify-between items-center text-white p-3">
             <div className="flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -35,12 +39,12 @@ export default function Popup({message,sucessflag}){
             </div>
             
             {/* The Cross Button */}
-            <button className="btn btn-ghost btn-xs btn-circle text-white hover:bg-black/20" onClick={(e)=>{setVisible(false)}}>
+            <button className="btn btn-ghost btn-xs btn-circle text-white hover:bg-black/20" onClick={(e)=>{console.log("popup shpuld be invisible");setVisible(false)}}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
             </svg>
             </button>
         </div>
         </div>
-    )
+    )}
 };
