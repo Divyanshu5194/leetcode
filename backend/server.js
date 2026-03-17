@@ -10,6 +10,7 @@ import { problemsRouter } from "./routes/problems.router.js";
 import { languageListFetcher } from "./utils/languagefetcher.js";
 import { submitRouter } from "./routes/submit.router.js";
 import cors from "cors"
+import { aiRouter } from "./routes/ai.router.js";
 dns.setServers(["1.1.1.1"]);
 
 
@@ -39,7 +40,8 @@ function server(){
 
     app.use(userRouter)
     app.use("/problems",problemsRouter)
-    app.use(submitRouter)               
+    app.use(submitRouter)      
+    app.use("/ai",aiRouter)         
 
     app.listen(PORT,()=>{
         console.log(`server listening on port : ${PORT}`)
