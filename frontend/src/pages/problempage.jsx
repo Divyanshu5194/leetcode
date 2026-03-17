@@ -7,6 +7,7 @@ import Editor from "@monaco-editor/react";
 import { languages } from "monaco-editor"
 import monacoLanguageMap from "../utils/constants"
 import Popup from "../components/Popup"
+import ChatAi from "../components/ChatAi"
 
 export default function ProblemPage(){
     const monacoMap=monacoLanguageMap
@@ -102,12 +103,12 @@ export default function ProblemPage(){
       }
     }
 
+    console.log({problem})
 
     async function handleSubmit(){
       setVisible(true)
         setRunError(null)
         setRunLoading(true)
-        console.log("handle run runned")
         
         try{
             const languageNameToSearch=language
@@ -163,22 +164,27 @@ export default function ProblemPage(){
           </a>
         </div>
         <div className="flex-none gap-3">
-          <div 
+          <button  
+            disabled={runLoading || loading} 
             className={`btn btn-outline btn-sm md:btn-md ${runLoading ? 'loading' : ''}`}
             onClick={handleRun}
-          >
-            {/* {runError && <Popup message={runError.error} sucessflag={false} visible={visible} setVisible={setVisible}></Popup>}
-            {runLoading && <Popup message={"Running Code"} sucessflag={true} visible={visible} setVisible={setVisible}></Popup>}
-            {runResponse && <Popup message={runResponse.msg} sucessflag={true} visible={visible} setVisible={setVisible}></Popup>} */}
+          >Run Code
+            
             {/* {!runLoading && 'Run'} */}
-          </div>
-          <button className="btn btn-primary btn-sm md:btn-md shadow-lg shadow-primary/20" onClick={handleSubmit}>
+          </button>
+          <button className="btn btn-primary btn-sm md:btn-md shadow-lg shadow-primary/20" disabled={runLoading || loading} onClick={handleSubmit}>
             Submit
           </button>
             <div className="bg-neutral text-neutral-content p-2 ml-3 w-min">
               {user?.username}
             </div>
         </div>
+      </div>
+
+      <div className="flex  justify-center w-full">
+        {runError && <Popup message={runError.error} sucessflag={false} visible={visible} setVisible={setVisible}></Popup>}
+        {runLoading && <Popup message={"Running Code"} sucessflag={true} visible={visible} setVisible={setVisible}></Popup>}
+        {runResponse && <Popup message={runResponse.msg} sucessflag={true} visible={visible} setVisible={setVisible}></Popup>}
       </div>
 
       {/* MAIN CONTENT AREA */}
@@ -192,6 +198,7 @@ export default function ProblemPage(){
             <button className={`tab tab- ${activeTab == "Editorial" ? "tab-active" : ""}`} onClick={(e)=>{setActiveTab(e.target.innerHTML)}}>Editorial</button>
             <button className={`tab tab- ${activeTab == "Solutions" ? "tab-active" : ""}`} onClick={(e)=>{setActiveTab(e.target.innerHTML)}}>Solutions</button>
             <button className={`tab tab- ${activeTab == "Submissions" ? "tab-active" : ""}`} onClick={async (e)=>{setActiveTab(e.target.innerHTML);await fetchSubmissions(problem._id)}}>Submissions</button>
+            <button className={`tab tab- ${activeTab == "ChatAi" ? "tab-active" : ""}`} onClick={async (e)=>{setActiveTab(e.target.innerHTML)}}>ChatAi</button>
           </div>
 
          {
@@ -246,6 +253,7 @@ export default function ProblemPage(){
           </div>)
          }
          {activeTab == "Submissions" && submissions.map((submission)=><li><div className="flex justify-between"><span>{submission.language.split(" ")[0]}</span><span>{submission.code}</span><span>{submission.testCasesPassed}</span><span>{submission.timeForExecution}</span><span>{submission.status}</span></div></li>)} 
+         {activeTab == "ChatAi" && <ChatAi statement={problem.statement} description={problem.description}></ChatAi>}
         </div>
 
         {/* RIGHT PANE: Code Editor */}
@@ -285,31 +293,7 @@ export default function ProblemPage(){
     )
 }
 
-
-//const languageMap=[]
-
-            // languageArray.forEach((languageObj)=>{
-            //     const Id=languageObj.id
-            //     const language=languageObj.name
-            //     const languageName=language.split(" ")[0]
-            //     const [_,...vArray]=language.split(" ")
-            //     let version=""
-            //     const versionNumber=vArray.find((vrsn)=>Number(vrsn)==vrsn)
-            //     vArray.forEach((v,index)=>{if(index==0)return version+=v;return version+=` ${v}`})
-            //     console.log({languageName,version})
-            //     const existingLanguage=languageMap.find((language)=>language.name==languageName)
-            //     const [__,...versionArray]=language?.name?.split(" ") 
-            //     const versionOfLanguage=versionArray?.find((vrsn)=>Number(vrsn)==vrsn)
-            //     vArray.forEach((v,index)=>{if(index==0)return version+=v;return version+=` ${v}`})
-            //     if(version){    if (!existingLanguage || versionOfLanguage<versionNumber){
-            //             const name=languageName+" "+version;
-            //             console.log({languageMapGoing:{id:Number(Id),name}})
-            //             languageMap.push({id:Number(Id),name})
-            //         }}
-            // })
-            // console.log({languageMap})
-
-            function getLatestLanguages(languageArray) {
+function getLatestLanguages(languageArray) {
   // Helper: compare dotted version strings (e.g., "18.1.8" vs "19.1.7")
   const versionCompare = (a, b) => {
     const aParts = a.split('.').map(Number);
