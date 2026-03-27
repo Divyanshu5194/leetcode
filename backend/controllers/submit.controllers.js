@@ -46,7 +46,7 @@ const submit=async (req,res)=>{
     }
     catch(error){
         console.log(error)
-        res.status(500).send({msg:"an error occured",error:error.message||"an error occured",data:null})
+        res.status(500).send({msg:"an error occured",error:error.message||"an error occured"})
     }
 }
 
@@ -72,7 +72,7 @@ const runCode=async (req,res)=>{
             //console.log({REASULT_STATUS_DESC:result.status.description})
             
             if(result.status.id!=3){
-                return res.status(400).send({msg:"error occured",data:result.status.description})
+                return res.status(400).send({msg:"error occured",error:result.status.description})
             }
         }
         console.log({RUN_RESULTS:results})
