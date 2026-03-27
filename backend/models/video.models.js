@@ -7,7 +7,10 @@ const videoSchema = new Schema(
       ref: "Problems",
       required: true,
     },
-
+    durationInMilliseconds:{
+      type:Number,
+      required:true
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -44,7 +47,6 @@ const videoSchema = new Schema(
     size:{
       type: Number,
       required: true,
-      maxLength: 500,
     },
     thumbnailUrl: {
       type:String,

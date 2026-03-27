@@ -13,6 +13,7 @@ import Solutions from "../models/solution.models.js"
 import TestCases from "../models/testcases.models.js"
 import Submissions from "../models/submissions.models.js"
 import { languageListFetcher } from "../utils/languagefetcher.js"
+import Video from "../models/video.models.js"
 
 const adminRegister=async (req,res)=>{
     try{
@@ -91,6 +92,14 @@ const getAllProblems=async (req,res)=>{
 const getASpecificProblem=async (req,res)=>{
     const {slug}=req.params
     const problem=await Problems.findOne({slug}).select("-createdBy -solutions -__v -updatedAt")
+
+    if(await Video.find({problem:problem._id})){
+        const {secureUrl,thumbnailUrl,durationInMilliseconds}=await Video.find({problem:problem._id})
+        problem.secureUrl=secureUrl
+        problem.thumbnailUrl=thumbnailUrl
+        problem.durationInMilliseconds=durationInMilliseconds
+    }
+    
     if(!problem){
         return res.status(404).send("problem not found")
     }
