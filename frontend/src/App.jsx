@@ -10,6 +10,8 @@ import Adminpage from './pages/adminpage'
 import ProblemPage from './pages/problempage'
 import CreateProblem from './pages/createProblem'
 import EditPage from './pages/editProblemPage'
+import EditVideo from './pages/editVideo'
+import UploadVideo from './pages/uploadVideo'
 
 function App() {
   const {isAuthenticated,user}=useSelector((state)=>state.auth)
@@ -31,6 +33,9 @@ function App() {
         <Route path='/admin' element={(user && user?.role=="Admin") ? <Adminpage></Adminpage> : <Navigate to={"/"}></Navigate>}></Route>
         <Route path='/create' element={(user && user?.role=="Admin") ? <CreateProblem></CreateProblem> : <Navigate to={"/"}></Navigate>}></Route>
         <Route path='/problems/edit/:slug' element={(user && user?.role=="Admin") ? <EditPage></EditPage> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='/problems/editvideo/:slug' element={(user && user?.role=="Admin") ? <EditVideo></EditVideo> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='/uploadvideo/:problemId' element={(user && user?.role=="Admin") ? <UploadVideo></UploadVideo> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='*' element={<h1>404 Page Not Found</h1>}></Route>
       </Routes>
     </>
   )
