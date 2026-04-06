@@ -3,6 +3,8 @@ import Problems from "../models/problems.models.js"
 
 export default async function problemValidator(passedobj){
 
+    console.log({passedobj})
+
     const {slug,title,difficulty,statement,constraints,description,topics,followUpQuestions,tags,testCases,solutions,boilerPlateCodes}=passedobj
     const existingProblem=await Problems.findOne({slug})
 
@@ -10,7 +12,7 @@ export default async function problemValidator(passedobj){
         throw new Error("Problem with this slug already exists")
     }
 
-    if(!slug || !title || !difficulty || !statement || !constraints || !description || !topics || !followUpQuestions || !tags || !boilerPlateCodes) {
+    if(!slug || !title || !difficulty || !statement || !constraints || !description || !topics || !followUpQuestions || !tags) {
         throw new Error("please fill all the feilds")
     }
 
