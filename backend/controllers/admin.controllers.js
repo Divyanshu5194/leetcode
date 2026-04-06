@@ -59,7 +59,7 @@ const createProblem=async (req,res)=>{
             }
         })
         if(errorresults.length>1){
-            return res.status(400).send(errorresults)
+            return res.status(400).send({success:false,error:"your solution was invalid"})
         }
 
         const {token}=req.cookies
@@ -71,10 +71,11 @@ const createProblem=async (req,res)=>{
         insertTestcases(testCases,problemid,adminId)
         insertExampleCases(examples,problemid,adminId)
         insertSolutions(solutions,problemid,adminId)
-        res.status(201).send("New Problem Created Succesfully")
+        console.log("problem created succesfully",{newProblem})
+        res.status(201).send({success:true,data:"Succesfuly created the propbelm"})
     }
     catch(error){
-        console.log(error)
+        console.log({CREATE_PROBLEM_ERROR:error})
         return res.status(400).send({message:(error.message || "an error occured in creation of problem")})
     }
 }
