@@ -5,6 +5,10 @@ import jwt from "jsonwebtoken"
 import Refreshtokens from "../models/refreshToken.model.js"
 import client from "../config/redisconnect.js"
 import Submissions from "../models/submissions.models.js"
+import ResetToken from "../models/resetTokens.models.js"
+import crypto from "crypto"
+import { sendEmail } from "../utils/emailsender.js"
+import validator from "validator"
 
 const register=async (req,res)=>{
     try{
@@ -189,7 +193,7 @@ const getProfile=async (req,res)=>{
 
 const deleteProfile=async (req,res)=>{
     try{
-        const {_id:userId}=user
+        const {_id:userId}=req.user
         await User.findOneAndDelete({_id:userId})
         res.status(200).send({msg:"deleted sucessfuilly"})
     }
@@ -198,4 +202,104 @@ const deleteProfile=async (req,res)=>{
     }
 }
 
-export {register,login,logout,refresh,getProfile,deleteProfile,checkAuth}
+const forgetPassword=async (req,res)=>{
+
+    console.log("forget password route hit")
+
+    try{
+    // email take and verify
+    const {email}=req.body
+
+    if (!email){
+        return res.status(404).send({success:false,error:"Please Enter a Email"})
+    }
+    
+    const user=await User.findOne({email})
+
+    if (!user){
+        return res.status(404).send({success:false,error:"Invalid Email"})
+    }
+
+    //generate a random token
+    const resetToken=crypto.randomBytes(32).toString('hex')
+
+    const hashedResetToken=crypto.createHash("sha256").update(resetToken).digest("hex")
+
+    
+
+    const resetUrl=`${req.protocol}://${req.get("host")}/resetpassword/${resetToken+':'+user._id}`
+
+    try{
+        await sendEmail(null,null,'t92135422@gmail.com',resetUrl)
+    }
+    catch(error){
+        console.log({EMAIL_SENDING_ERROR:error})
+        return res.status(500).send({success:false,error:"sorry the password reset email couldnt be sent please try again later"})
+    }
+
+    await ResetToken.create({user:user._id,token:hashedResetToken})
+
+    console.log({ResetToken,userId:user._id})
+
+    res.status(200).send({success:true,data:resetUrl})
+    }
+    catch(error){
+        console.log({ERROR_IN_FORGET_PASSWORD_ROUTE:error})
+        res.status(500).send({success:false,error:error.message || "An Error Occured In Resetting Password"})
+    }
+}
+
+const resetPassword=async (req,res)=>{
+    console.log("reset password route hit")
+    try{
+    //verify the user token
+        const {tokenAndId}=req.params
+
+        if(!req.body.newPassword){
+            return res.status(400).send({success:false,error:"Please ENter a password"})
+        }
+
+        const {newPassword}=req.body
+
+        const token=tokenAndId.split(":")[0]
+
+        const userId=tokenAndId.split(":")[1]
+
+        const hashedResetTokenarray=await ResetToken.find({user:userId})
+
+        console.log({hashedResetTokenarray})
+
+        const recievedTokenHash=crypto.createHash("sha256").update(token).digest("hex")
+
+        const foundToken=hashedResetTokenarray.find((token)=> token.token==recievedTokenHash)
+
+        if(!foundToken){
+            return res.status(401).send({success:false,error:"The Link Isnt Valid Please send reset link again"})
+        }
+        
+        const tokenValidity = Date.now() - new Date(foundToken.createdAt).getTime();
+
+        if(tokenValidity>1000*60*10){
+            await ResetToken.deleteMany({user:foundToken.user})
+            return res.status(401).send({success:false,error:"The Link Isnt Valid Please send reset link again"})
+        }
+
+        if(!validator.isStrongPassword(newPassword)){
+            return res.status(400).send({success:false,error:"Please Choose A Strong Password"})
+        }
+
+        const hashedpassword=await bcrypt.hash(newPassword,10)  
+        
+        
+        await User.findOneAndUpdate({_id:foundToken.user},{password:hashedpassword})
+        
+
+        return res.status(200).send("sucess")
+    }
+    catch(error){
+        console.log({PASSWORD_RESET_ERROR:error})
+        res.status(500).send({success:false,error:error.message || "An Error Occured In Resetting Password"})
+    }
+}
+
+export {register,login,logout,refresh,getProfile,deleteProfile,checkAuth,forgetPassword,resetPassword}
