@@ -12,12 +12,12 @@ import CreateProblem from './pages/createProblem'
 import EditPage from './pages/editProblemPage'
 import EditVideo from './pages/editVideo'
 import UploadVideo from './pages/uploadVideo'
+import { ForgetPassword } from './pages/forgetPassword'
+
 
 function App() {
   const {isAuthenticated,user}=useSelector((state)=>state.auth)
-  console.log({user})
   const dispatch=useDispatch()
-  console.log({isAuthenticated})
 
   useEffect(()=>{dispatch(checkAuth())},[])
   useEffect(()=>{dispatch(fetchLanguages())},[])
@@ -35,6 +35,7 @@ function App() {
         <Route path='/problems/edit/:slug' element={(user && user?.role=="Admin") ? <EditPage></EditPage> : <Navigate to={"/"}></Navigate>}></Route>
         <Route path='/problems/editvideo/:slug' element={(user && user?.role=="Admin") ? <EditVideo></EditVideo> : <Navigate to={"/"}></Navigate>}></Route>
         <Route path='/uploadvideo/:problemId' element={(user && user?.role=="Admin") ? <UploadVideo></UploadVideo> : <Navigate to={"/"}></Navigate>}></Route>
+        <Route path='/forgetpassword' element={ (isAuthenticated)?(<Navigate to={"/"}></Navigate>):(<ForgetPassword></ForgetPassword>)}></Route>
         <Route path='*' element={<h1>404 Page Not Found</h1>}></Route>
       </Routes>
     </>
