@@ -13,6 +13,7 @@ import EditPage from './pages/editProblemPage'
 import EditVideo from './pages/editVideo'
 import UploadVideo from './pages/uploadVideo'
 import { ForgetPassword } from './pages/forgetPassword'
+import ResetPassword from './pages/resetPassword'
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path='/problems/editvideo/:slug' element={(user && user?.role=="Admin") ? <EditVideo></EditVideo> : <Navigate to={"/"}></Navigate>}></Route>
         <Route path='/uploadvideo/:problemId' element={(user && user?.role=="Admin") ? <UploadVideo></UploadVideo> : <Navigate to={"/"}></Navigate>}></Route>
         <Route path='/forgetpassword' element={ (isAuthenticated)?(<Navigate to={"/"}></Navigate>):(<ForgetPassword></ForgetPassword>)}></Route>
+        <Route path='/resetpassword/:tokenAndUserid' element={ (isAuthenticated)?(<Navigate to={"/"}></Navigate>):(<ResetPassword></ResetPassword>)} ></Route>
         <Route path='*' element={<h1>404 Page Not Found</h1>}></Route>
       </Routes>
     </>
