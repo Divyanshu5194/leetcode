@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from "zod"
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/auth/authSlice';
-import { useNavigate } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 
 export default function Login(){
@@ -25,7 +25,7 @@ export default function Login(){
         password:z.string().min(8,"password should atleast be 8 chacters long").max(20,"Password should not be greater than 30 characters")
     })
 
-    const {register,handleSubmit,formState: { errors },} = useForm({resolver:zodResolver(loginSchema)})
+    const {register,handleSubmit,formState: { errors },watch} = useForm({resolver:zodResolver(loginSchema)})
 
     return (
         <div className='min-h-screen grid place-items-center bg-base-200'>
@@ -46,6 +46,7 @@ export default function Login(){
                         <input className='input input-bordered w-full' placeholder='Enter Password' type={showPassword ? "text" : "password"} {...register('password',{required:true})} />
                         <button className='' onClick={()=>{setShowPassword(!showPassword)}}>{showPassword ? "Hide" : "show"}</button>
                         {errors.password && <p className='text-red-700' >{errors.password.message}</p>}
+                        <NavLink className="block link text-yellow-600 pl-1 w-fit" to='/forgetpassword'>Forgot Password?</NavLink>
                     </div>
 
                     <div className='w-full flex justify-between mb-4'>
