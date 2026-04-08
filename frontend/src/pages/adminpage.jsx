@@ -20,9 +20,11 @@ const Adminpage = () => {
         if(window.confirm("are you sure you want to delete this problem")){try{
             const {data:response}=await axiosClient.delete(`problems/delete/${problemSlug}`)
             setDeleteProblemMsg(response.msg)
+            setDeleteProblemError(null)
         }
         catch(error){
             setDeleteProblemError(error.message || "an error occured")
+            setDeleteProblemMsg(null)
         }}
     }
 
@@ -107,6 +109,7 @@ const Adminpage = () => {
                                 <span className="bg-blue-500 text-white rounded-[4px] flex h-min justify-center p-2">{problem.difficulty}</span>
                             </span>
                             <span className='flex p-1 gap-1'>
+                                <Link to={`/problems/editVideo/${problem.slug}`} className="btn btn-outline">Edit Video</Link>
                                 <Link to={`/problems/edit/${problem.slug}`} className="btn btn-outline">Edit</Link>
                                 <button className="btn btn-error" onClick={async ()=>{
                                     await deleteProblem(problem.slug)
