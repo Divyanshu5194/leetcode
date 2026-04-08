@@ -222,12 +222,11 @@ const forgetPassword=async (req,res)=>{
 
     //generate a random token
     const resetToken=crypto.randomBytes(32).toString('hex')
+    console.log({newToken:resetToken})
 
     const hashedResetToken=crypto.createHash("sha256").update(resetToken).digest("hex")
 
-    
-
-    const resetUrl=`${req.protocol}://${req.get("host")}/resetpassword/${resetToken+':'+user._id}`
+    const resetUrl=`${req.protocol}://localhost:5173/resetpassword/${resetToken+':'+user._id}`
 
     try{
         await sendEmail(null,null,'t92135422@gmail.com',resetUrl)
@@ -241,7 +240,7 @@ const forgetPassword=async (req,res)=>{
 
     console.log({ResetToken,userId:user._id})
 
-    res.status(200).send({success:true,data:resetUrl})
+    res.status(200).send({success:true,data:"succesfully reset password... redirecting"})
     }
     catch(error){
         console.log({ERROR_IN_FORGET_PASSWORD_ROUTE:error})
@@ -291,10 +290,15 @@ const resetPassword=async (req,res)=>{
         const hashedpassword=await bcrypt.hash(newPassword,10)  
         
         
-        await User.findOneAndUpdate({_id:foundToken.user},{password:hashedpassword})
+        const user=await User.findOneAndUpdate({_id:foundToken.user},{password:hashedpassword})
         
+        const acesstoken=jwt.sign({_id:user._id,role:user.role},process.env.ENCRIPTION_KEY,{expiresIn:"1h"})
+        const refreshToken=jwt.sign({_id:user._id,role:user.role},process.env.REFRESH_TOKEN_KEY,{expiresIn:"30d"})
+        await Refreshtokens.create({user:user._id,refreshToken:refreshToken})
 
-        return res.status(200).send("sucess")
+        res.cookie("token",acesstoken,{maxAge:60*60*1000,httpOnly:true,secure:true,sameSite:"None"})
+        res.cookie("refreshToken",refreshToken,{maxAge:60*60*1000*24*30,httpOnly:true,secure:true,sameSite:"None"})
+        return res.status(200).send({success:true,data:"Sucessfully reset your password"})
     }
     catch(error){
         console.log({PASSWORD_RESET_ERROR:error})
