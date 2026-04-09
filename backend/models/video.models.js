@@ -47,11 +47,7 @@ const videoSchema = new Schema(
     size:{
       type: Number,
       required: true,
-    },
-    thumbnailUrl: {
-      type:String,
-      required: true,
-    },
+    }
   },
   { timestamps: true }
 );
