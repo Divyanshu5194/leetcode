@@ -82,7 +82,9 @@ const createProblem=async (req,res)=>{
 
 const getAllProblems=async (req,res)=>{
     try{
-        const problems=await Problems.find({}).select("title difficulty slug")
+        const limit=req.query.limit
+        const skip=req.query.skip
+        const problems=await Problems.find({}).select("title difficulty slug").limit(limit).skip(skip)
         res.status(200).send({msg:"sucessful",data:problems})
     }
     catch(error){
