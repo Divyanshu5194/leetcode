@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router"
+import { NavLink, useParams } from "react-router"
 import { axiosClient } from "../utils/axiosClient"
 import { useSelector } from "react-redux"
 import LanguageSelectorFeild from "../components/LanguageSelector"
@@ -8,9 +8,14 @@ import { languages } from "monaco-editor"
 import monacoLanguageMap from "../utils/constants"
 import Popup from "../components/Popup"
 import ChatAi from "../components/ChatAi"
+import axios from "axios"
+import { VenusAndMarsIcon } from "lucide-react"
+import { Editorial } from "../components/Editorial"
 
 export default function ProblemPage(){
     const monacoMap=monacoLanguageMap
+
+    const [videoMeta,setVideoMeta]=useState(null)
 
     const {languageArray,user}=useSelector((state)=>state.auth)
     const [visible,setVisible]=useState(true)
@@ -137,6 +142,21 @@ export default function ProblemPage(){
             
         }
     }
+
+    async function fetchVideoUrl(){
+    //checkVideoExistannce/:problemId
+    if(problem)
+    {        try{
+                const response=await axiosClient.get(`video/checkVideoExistannce/${problem?._id}`)
+                setVideoMeta(response.data.data)
+                console.log({VIDEO_EXISTING_RES:response.data.data})
+            }
+            catch(error){
+              setVideoMeta(null)
+                console.log(error)
+            }}
+        
+  }
     
 
     if(error){
@@ -155,6 +175,13 @@ export default function ProblemPage(){
     }
     return (
         <div className="flex flex-col h-screen bg-base-300 font-sans text-base-content">
+
+        {/* POPUP */}
+          <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none">
+            {runError && <div className="pointer-events-auto"><Popup message={runError.error} mode="error"></Popup></div>}
+            {runLoading && <div className="pointer-events-auto"><Popup message={"Running Code"} sucessflag={true} mode="info"></Popup></div>}
+            {runResponse && <div className="pointer-events-auto"><Popup message={runResponse.msg} sucessflag={true} mode="success"></Popup></div>}
+          </div>
       
       {/* TOP GLOBAL NAVBAR */}
       <div className="navbar bg-base-100 border-b border-base-content/10 px-4 min-h-[4rem]">
@@ -163,7 +190,7 @@ export default function ProblemPage(){
             
           </a>
         </div>
-        <div className="flex-none gap-3">
+        <div className="flex-none items-center gap-3">
           <button  
             disabled={runLoading || loading} 
             className={`btn btn-outline btn-sm md:btn-md ${runLoading ? 'loading' : ''}`}
@@ -175,17 +202,13 @@ export default function ProblemPage(){
           <button className="btn btn-primary btn-sm md:btn-md shadow-lg shadow-primary/20" disabled={runLoading || loading} onClick={handleSubmit}>
             Submit
           </button>
-            <div className="bg-neutral text-neutral-content p-2 ml-3 w-min">
-              {user?.username}
-            </div>
+          <div className="bg-neutral text-neutral-content p-2 ml-3 w-min">
+            {user?.username}
+          </div>
         </div>
       </div>
 
-      <div className="flex  justify-center w-full">
-        {runError && <Popup message={runError.error} sucessflag={false} visible={visible} setVisible={setVisible}></Popup>}
-        {runLoading && <Popup message={"Running Code"} sucessflag={true} visible={visible} setVisible={setVisible}></Popup>}
-        {runResponse && <Popup message={runResponse.msg} sucessflag={true} visible={visible} setVisible={setVisible}></Popup>}
-      </div>
+      
 
       {/* MAIN CONTENT AREA */}
       <div className="flex flex-1 overflow-hidden">
@@ -195,9 +218,9 @@ export default function ProblemPage(){
           {/* Sub-Nav */}
           <div className="tabs tabs-boxed bg-transparent p-2 gap-2">
             <button className={`tab tab- ${activeTab == "Description" ? "tab-active" : ""}`} onClick={(e)=>{setActiveTab(e.target.innerHTML)}}>Description</button>
-            <button className={`tab tab- ${activeTab == "Editorial" ? "tab-active" : ""}`} onClick={(e)=>{setActiveTab(e.target.innerHTML)}}>Editorial</button>
+            <button className={`tab tab- ${activeTab == "Editorial" ? "tab-active" : ""}`} onClick={(e)=>{setActiveTab(e.target.innerHTML);if(!videoMeta){fetchVideoUrl()}}}>Editorial</button>
             <button className={`tab tab- ${activeTab == "Solutions" ? "tab-active" : ""}`} onClick={(e)=>{setActiveTab(e.target.innerHTML)}}>Solutions</button>
-            <button className={`tab tab- ${activeTab == "Submissions" ? "tab-active" : ""}`} onClick={async (e)=>{setActiveTab(e.target.innerHTML);await fetchSubmissions(problem._id)}}>Submissions</button>
+            <button className={`tab tab- ${activeTab == "Submissions" ? "tab-active" : ""}`} onClick={async (e)=>{setActiveTab(e.target.innerHTML);if(submissions.length==0)await fetchSubmissions(problem._id)}}>Submissions</button>
             <button className={`tab tab- ${activeTab == "ChatAi" ? "tab-active" : ""}`} onClick={async (e)=>{setActiveTab(e.target.innerHTML)}}>ChatAi</button>
           </div>
 
@@ -252,8 +275,21 @@ export default function ProblemPage(){
             </div>
           </div>)
          }
-         {activeTab == "Submissions" && submissions.map((submission)=><li><div className="flex justify-between"><span>{submission.language.split(" ")[0]}</span><span>{submission.code}</span><span>{submission.testCasesPassed}</span><span>{submission.timeForExecution}</span><span>{submission.status}</span></div></li>)} 
+         {activeTab == "Submissions" && <table>
+              <tr>
+                <th>Language</th>
+                <th>code </th>
+                <th>Test Cases Passed</th>
+                <th>time taken to execute</th>
+                <th>submission status</th>
+              </tr>
+
+              {
+                submissions.map((submission)=><tr><td>{submission.language.split(" ")[0]}</td><td><NavLink to="/submission/code" className="btn btn-outline">Code</NavLink></td><td>{submission.testCasesPassed}</td><td>{submission.timeForExecution}</td><td>{submission.status}</td></tr>)
+              }
+            </table>} 
          {activeTab == "ChatAi" && <ChatAi statement={problem.statement} description={problem.description}></ChatAi>}
+         {activeTab == "Editorial" && <Editorial secureUrl={videoMeta?.secureUrl} duration={videoMeta?.duration}></Editorial>}
         </div>
 
         {/* RIGHT PANE: Code Editor */}
