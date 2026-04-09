@@ -15,14 +15,17 @@ const ForgetPassword=()=>{
             console.log({response})
             if(data.error){
                 setError(response.error)
+                setResponse(null)
             }
             else{
                 setResponse(response.data.data)
+                setError(null)
             }
         }
         catch(error){
             console.log({error})
             setError(error.response?.data?.message || error.response?.data?.error)
+            setResponse(null)
         }
         finally{
             setLoading(false)
@@ -40,7 +43,7 @@ const ForgetPassword=()=>{
                         <label >Email?</label>
                         <input className='input input-bordered w-full' placeholder='Enter Username or Email' value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
                         {error && <p className="text-red-600">{error}</p>}
-                        {response && <p className="text-green-600">{response.data}</p>}
+                        {response && <p className="text-green-600">Link Sent Sucessfully check your email!</p>}
                     </div>
                     <button className="btn btn-active" disabled={loading} onClick={forgetPassword}>Search</button>
                 </div>
